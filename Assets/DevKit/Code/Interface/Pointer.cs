@@ -3,7 +3,7 @@
 namespace DevKit
 {
 	// NOTE: To get BlockedByCanvas to work, add CanvasPointerCheck to all Canvas elements in your scene.
-	public class Pointer : MonoBehaviour 
+	public abstract class Pointer : MonoBehaviour 
 	{
 		public bool HasTarget => _pointerTarget != null;
 		public PointerTarget Target => _pointerTarget;
@@ -20,16 +20,7 @@ namespace DevKit
 		protected Vector3 _hitNormal;
 		protected Vector3 _hitPoint;
 
-		protected virtual Ray GetRay ()
-		{
-			if (Time.frameCount == _lastUpdatedFrame)
-			{
-				return _ray;
-			}
-			_lastUpdatedFrame = Time.frameCount;
-			_ray = new Ray(transform.position, transform.forward);
-			return _ray;
-		}
+		protected abstract Ray GetRay ();
 
 		protected virtual PointerTarget GetPointerTarget ()
 		{
@@ -37,9 +28,9 @@ namespace DevKit
 			if (Physics.Raycast(ray, out RaycastHit hit, 1000, _layerMask, QueryTriggerInteraction.Ignore))
 			{
 				_hitPoint = hit.point;
-				_hitPoint = hit.normal;
+				_hitNormal = hit.normal;
 				PointerTarget target = hit.collider.gameObject.GetComponentInParent<PointerTarget>();
-				if (target.IsActive)
+				if (target != null && target.IsActive)
 				{
 					return target;
 				}
@@ -79,6 +70,10 @@ namespace DevKit
 				}
 			}
 
+			if (currentTarget != null)
+			{
+				currentTarget.SetPointerHitPoint(_hitPoint, _hitNormal);
+			}
 			_pointerTarget = currentTarget;
 		}
 	}

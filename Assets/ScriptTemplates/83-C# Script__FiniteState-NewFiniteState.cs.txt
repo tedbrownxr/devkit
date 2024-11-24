@@ -1,0 +1,36 @@
+﻿// Robot
+// Copyright (c) 2024 Liquid Wire Inc.
+// Author: Ted Brown <tedbrownxr@gmail.com>
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Robot
+{
+	public class #SCRIPTNAME# : FiniteState 
+	{
+		public static readonly string Name = "Undefined";
+		public override string StateName => Name;
+
+		protected override void OnAfterInitialize () 
+		{
+		}
+
+		protected override void OnAfterEnter () 
+		{
+		}
+
+		protected override void OnProcess ()
+		{
+		}
+
+		protected override void OnBeforeExit () 
+		{
+		}
+	}
+}
