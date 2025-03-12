@@ -20,12 +20,12 @@ namespace DevKit
 		
 		public float ActiveTime => _state == ButtonState.Pressed ? Time.time - _startTime : 0;
 		public ButtonEventType Event => _event;
-		public InputState State => _state;
+		public ButtonState State => _state;
 
 
 		protected float _startTime;
 		protected ButtonEventType _event;
-		protected InputState _state;
+		protected ButtonState _state;
 
 		// if this is locked to a gameobject, 
 		// events will only be broadcast to objects that have this object as a parent in their hierarchy.
@@ -58,11 +58,7 @@ namespace DevKit
 
 		protected void Awake ()
 		{
-<<<<<<< HEAD
-			_state = InputState.Inactive;
-=======
 			_state = ButtonState.Hovered;
->>>>>>> main
 		}
 
 		protected void Update ()
