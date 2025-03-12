@@ -74,6 +74,11 @@ namespace DevKit
 			return true;
 		}
 
+		public static float Normalize (float value, float min, float max)
+		{
+			return (value - min) / (max - min);
+		}
+		
 		public static float Remap (float value, float oldMin, float oldMax, float newMin, float newMax)
 		{
 			return newMin + (value - oldMin) * (newMax - newMin) / (oldMax - oldMin);

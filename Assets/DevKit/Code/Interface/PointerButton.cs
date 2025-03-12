@@ -1,4 +1,4 @@
-// Zephyr
+// DevKit
 // Copyright (c) 2024 Ted Brown
 
 using System;
@@ -15,13 +15,13 @@ namespace DevKit
 		public static float TapTime = 0.2f;
 		public static float HoldTime = 0.3f;
 		
-		public float ActiveTime => _state == ButtonState.Active ? Time.time - _startTime : 0;
+		public float ActiveTime => _state == InputState.Active ? Time.time - _startTime : 0;
 		public ButtonEventType Event => _event;
-		public ButtonState State => _state;
+		public InputState State => _state;
 
 		protected float _startTime;
 		protected ButtonEventType _event;
-		protected ButtonState _state;
+		protected InputState _state;
 
 		private static GameObject _lockInteractionsToObject;
 
@@ -44,7 +44,7 @@ namespace DevKit
 
 		protected void Awake ()
 		{
-			_state = ButtonState.Inactive;
+			_state = InputState.Inactive;
 		}
 
 		protected void Update ()
@@ -53,26 +53,22 @@ namespace DevKit
 
 			switch (_state)
 			{
-				case ButtonState.None:
-					_state = ButtonState.Inactive;
-					break;
-
-				case ButtonState.Inactive:
+				case InputState.Inactive:
 					if (IsActive())
 					{
 						_event = ButtonEventType.Start;
-						_state = ButtonState.RecentlyActive;
+						_state = InputState.ActivatedThisFrame;
 						_startTime = Time.time;
 					}
 					break;
 
-				case ButtonState.RecentlyActive:
+				case InputState.DeactivatedThisFrame:
 					if (IsActive())
 					{
 						if (Time.time - _startTime > HoldTime)
 						{
 							_event = ButtonEventType.Hold;
-							_state = ButtonState.Active;
+							_state = InputState.Active;
 						}
 					}
 					else
@@ -85,15 +81,15 @@ namespace DevKit
 						{
 							_event = ButtonEventType.Release;
 						}
-						_state = ButtonState.Inactive;
+						_state = InputState.Inactive;
 					}
 					break;
 
-				case ButtonState.Active:
+				case InputState.Active:
 					if (IsActive() == false)
 					{
 						_event = ButtonEventType.Release;
-						_state = ButtonState.Inactive;
+						_state = InputState.Inactive;
 					}
 					break;
 			}
