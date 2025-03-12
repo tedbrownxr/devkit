@@ -37,7 +37,7 @@ namespace DevKit
 				return instance as T;
 			}
 
-			Debug.LogError($"GlobalAssets.Get: No instance of type [{type.ToString()}] found. Returning null.");
+			Log.Error($"GlobalAssets.Get: No instance of type [{type.ToString()}] found. Returning null.");
 			return null;
 		}
 

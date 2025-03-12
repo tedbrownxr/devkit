@@ -8,22 +8,24 @@ namespace DevKit
 {
 	public class PointerButton : MonoBehaviour 
 	{
-		public Action OnTap;
-		
+		public Action OnClick;
+		public Action OnHover;
+		public Action OnUnhover;
+
 		[SerializeField] private PointerTarget _pointerTarget;
 
 		public static float TapTime = 0.2f;
 		public static float HoldTime = 0.3f;
+		private static GameObject _lockInteractionsToObject;
 		
-		public float ActiveTime => _state == ButtonState.Active ? Time.time - _startTime : 0;
+		public float ActiveTime => _state == ButtonState.Pressed ? Time.time - _startTime : 0;
 		public ButtonEventType Event => _event;
 		public ButtonState State => _state;
+
 
 		protected float _startTime;
 		protected ButtonEventType _event;
 		protected ButtonState _state;
-
-		private static GameObject _lockInteractionsToObject;
 
 		// if this is locked to a gameobject, 
 		// events will only be broadcast to objects that have this object as a parent in their hierarchy.
@@ -37,14 +39,26 @@ namespace DevKit
 			_lockInteractionsToObject = null;
 		}
 
-		public bool IsActive ()
+		public void Activate ()
 		{
-			return Input.GetMouseButton(0) && _pointerTarget.IsHovered;
+			_state = ButtonState.Idle;
+			_pointerTarget.Activate();
+		}
+
+		public void Deactivate ()
+		{
+			_pointerTarget.Deactivate();
+			_state = ButtonState.Deactivated;
+		}
+
+		public virtual bool GetPrimaryButton ()
+		{
+			return Input.GetMouseButton(0);
 		}
 
 		protected void Awake ()
 		{
-			_state = ButtonState.Inactive;
+			_state = ButtonState.Hovered;
 		}
 
 		protected void Update ()
@@ -54,46 +68,79 @@ namespace DevKit
 			switch (_state)
 			{
 				case ButtonState.None:
-					_state = ButtonState.Inactive;
+					_state = ButtonState.Idle;
 					break;
 
-				case ButtonState.Inactive:
-					if (IsActive())
+				case ButtonState.Idle:
+					if (_pointerTarget.IsHovered)
 					{
-						_event = ButtonEventType.Start;
-						_state = ButtonState.RecentlyActive;
-						_startTime = Time.time;
+						_state = ButtonState.Hovered;
+						OnHover?.Invoke();
 					}
 					break;
 
-				case ButtonState.RecentlyActive:
-					if (IsActive())
+				case ButtonState.Hovered:
+					if (_pointerTarget.IsHovered)
 					{
-						if (Time.time - _startTime > HoldTime)
+						if (GetPrimaryButton())
 						{
-							_event = ButtonEventType.Hold;
-							_state = ButtonState.Active;
+							_event = ButtonEventType.Start;
+							_state = ButtonState.RecentlyPressed;
+							_startTime = Time.time;
 						}
 					}
 					else
 					{
-						if (Time.time - _startTime < TapTime)
-						{
-							_event = ButtonEventType.Tap;
-						}
-						else
-						{
-							_event = ButtonEventType.Release;
-						}
-						_state = ButtonState.Inactive;
+						_state = ButtonState.Idle;
+						OnUnhover?.Invoke();
 					}
 					break;
 
-				case ButtonState.Active:
-					if (IsActive() == false)
+				case ButtonState.RecentlyPressed:
+					if (_pointerTarget.IsHovered)
+					{
+						if (GetPrimaryButton())
+						{
+							if (Time.time - _startTime > HoldTime)
+							{
+								_event = ButtonEventType.Hold;
+								_state = ButtonState.Pressed;
+							}
+						}
+						else
+						{
+							if (Time.time - _startTime < TapTime)
+							{
+								_event = ButtonEventType.Tap;
+							}
+							else
+							{
+								_event = ButtonEventType.Release;
+							}
+							_state = ButtonState.Hovered;
+						}
+					}
+					else
+					{
+						_state = ButtonState.Idle;
+						OnUnhover?.Invoke();
+					}
+					break;
+
+				case ButtonState.Pressed:
+					if (_pointerTarget.IsHovered)
+					{
+						if (GetPrimaryButton() == false)
+						{
+							_event = ButtonEventType.Release;
+							_state = ButtonState.Hovered;
+						}
+					}
+					else
 					{
 						_event = ButtonEventType.Release;
-						_state = ButtonState.Inactive;
+						_state = ButtonState.Idle;
+						OnUnhover?.Invoke();
 					}
 					break;
 			}
@@ -119,7 +166,7 @@ namespace DevKit
 						return;
 					}
 				}
-				OnTap?.Invoke();
+				OnClick?.Invoke();
 			}
 		}
 	}

@@ -5,6 +5,26 @@ namespace DevKit
 	// https://easings.net/
 	public class TweenLib
 	{
+		public static float EaseInCirc (float x)
+		{
+			return 1 - Mathf.Sqrt(1 - Mathf.Pow(x, 2));
+		}
+
+		public static float EaseInCubic (float x)
+		{
+			return x * x * x;
+		}
+
+		public static float EaseInOutQuad (float x)
+		{
+			return x < 0.5f ? 2f * x * x : 1 - Mathf.Pow(-2f * x + 2f, 2f) / 2f;
+		}
+
+		public static float EaseInQuint (float x)
+		{
+			return x * x * x * x * x;
+		}
+
 		public static float EaseOutBounce (float x)
 		{
 			const float n1 = 7.5625f;
@@ -36,6 +56,11 @@ namespace DevKit
 		public static float EaseOutCubic (float x)
 		{
 			return 1 - Mathf.Pow(1 - x, 3);
+		}
+
+		public static float EaseOutQuart (float x)
+		{
+			return 1 - Mathf.Pow(1 - x, 4);			
 		}
 	}
 }
