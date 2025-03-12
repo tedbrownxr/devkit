@@ -115,30 +115,30 @@ namespace DevKit
 			if (_hasStarted == false)
 			{
 				// If it's a Meta Quest scene, confirm tracking has started by seeing if the camera is no longer at zero
-				if (FindObjectOfType<OVRBody>())
-				{
-					// This is an error that can happen when the connection to Link is corrupted.
-					if (Camera.main == null)
-					{
-						Debug.Log("no main camera");
-						return;
-						// Debug.LogError("System connection failure. Restart Unity, restart Link, and reconnect USB cable.");
-						// Debug.Break();
-						// return;
-					}
-					if (Vector3.Equals(Camera.main.transform.position, Vector3.zero))
-					{
-						return;
-					}
-					GoToStateImmediately(_startState.StateName);
-					_hasStarted = true;
-				}
+				// if (FindObjectOfType<OVRBody>())
+				// {
+				// 	// This is an error that can happen when the connection to Link is corrupted.
+				// 	if (Camera.main == null)
+				// 	{
+				// 		Debug.Log("no main camera");
+				// 		return;
+				// 		// Debug.LogError("System connection failure. Restart Unity, restart Link, and reconnect USB cable.");
+				// 		// Debug.Break();
+				// 		// return;
+				// 	}
+				// 	if (Vector3.Equals(Camera.main.transform.position, Vector3.zero))
+				// 	{
+				// 		return;
+				// 	}
+				// 	GoToStateImmediately(_startState.StateName);
+				// 	_hasStarted = true;
+				// }
 				// This is not a Meta Quest scene. Go ahead and start.
-				else
-				{
+				// else
+				// {
 					GoToStateImmediately(_startState.StateName);
 					_hasStarted = true;
-				}
+				// }
 			}
 
 			if (_activeState)
