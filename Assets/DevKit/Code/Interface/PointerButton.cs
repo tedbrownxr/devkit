@@ -18,11 +18,7 @@ namespace DevKit
 		public static float HoldTime = 0.3f;
 		private static GameObject _lockInteractionsToObject;
 		
-<<<<<<< HEAD
-		public float ActiveTime => _state == InputState.Active ? Time.time - _startTime : 0;
-=======
 		public float ActiveTime => _state == ButtonState.Pressed ? Time.time - _startTime : 0;
->>>>>>> main
 		public ButtonEventType Event => _event;
 		public InputState State => _state;
 
@@ -75,19 +71,6 @@ namespace DevKit
 
 			switch (_state)
 			{
-<<<<<<< HEAD
-				case InputState.Inactive:
-					if (IsActive())
-					{
-						_event = ButtonEventType.Start;
-						_state = InputState.ActivatedThisFrame;
-						_startTime = Time.time;
-					}
-					break;
-
-				case InputState.DeactivatedThisFrame:
-					if (IsActive())
-=======
 				case ButtonState.None:
 					_state = ButtonState.Idle;
 					break;
@@ -102,41 +85,16 @@ namespace DevKit
 
 				case ButtonState.Hovered:
 					if (_pointerTarget.IsHovered)
->>>>>>> main
 					{
 						if (GetPrimaryButton())
 						{
-<<<<<<< HEAD
-							_event = ButtonEventType.Hold;
-							_state = InputState.Active;
-=======
 							_event = ButtonEventType.Start;
 							_state = ButtonState.RecentlyPressed;
 							_startTime = Time.time;
->>>>>>> main
 						}
 					}
 					else
 					{
-<<<<<<< HEAD
-						if (Time.time - _startTime < TapTime)
-						{
-							_event = ButtonEventType.Tap;
-						}
-						else
-						{
-							_event = ButtonEventType.Release;
-						}
-						_state = InputState.Inactive;
-					}
-					break;
-
-				case InputState.Active:
-					if (IsActive() == false)
-					{
-						_event = ButtonEventType.Release;
-						_state = InputState.Inactive;
-=======
 						_state = ButtonState.Idle;
 						OnUnhover?.Invoke();
 					}
@@ -187,7 +145,6 @@ namespace DevKit
 						_event = ButtonEventType.Release;
 						_state = ButtonState.Idle;
 						OnUnhover?.Invoke();
->>>>>>> main
 					}
 					break;
 			}
