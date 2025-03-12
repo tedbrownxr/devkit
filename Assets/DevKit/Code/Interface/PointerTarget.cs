@@ -2,43 +2,54 @@
 // Copyright (c) 2024 Ted Brown
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DevKit
 {
 	public class PointerTarget : MonoBehaviour
 	{
-		public Action OnHover;
-		public Action OnUnhover;
+		public Action<Pointer> OnTarget;
+		public Action<Pointer> OnUntarget;
 
 		public bool IsActive => _isActive;
-		public bool IsHovered => _isHovered;
+		public bool IsHovered => _hoveringPointers.Count > 0;
 		public Vector3 HitNormal => _hitNormal;
 		public Vector3 HitPoint => _hitPoint;
 
-		[SerializeField] private bool _activateOnStart = true;
+		[SerializeField] private bool _activeByDefault = true;
 
 		private bool _isActive;
-		private bool _isHovered;
+		private HashSet<Pointer> _hoveringPointers;
 		private Vector3 _hitNormal;
 		private Vector3 _hitPoint;
 
 		public void Activate ()
 		{
 			_isActive = true;
+			foreach (Pointer pointer in _hoveringPointers)
+			{
+				OnTarget?.Invoke(pointer);
+			}
 		}
 
 		public void Deactivate ()
 		{
 			_isActive = false;
+			foreach (Pointer pointer in _hoveringPointers)
+			{
+				OnUntarget?.Invoke(pointer);
+			}
 		}
 
-		public void Hover ()
+		// The object always knows if it's hovered or not.
+		// Active state simply determines if it broadcasts this or not.
+		public void Hover (Pointer pointer)
 		{
-			if (_isActive && _isHovered == false)
+			_hoveringPointers.Add(pointer);
+			if (_isActive)
 			{
-				_isHovered = true;
-				OnHover?.Invoke();
+				OnTarget?.Invoke(pointer);
 			}
 		}
 
@@ -48,18 +59,24 @@ namespace DevKit
 			_hitPoint = hitPoint;
 		}
 
-		public void Unhover ()
+		// The object always knows if it's hovered or not.
+		// Active state simply determines if it broadcasts this or not.
+		public void Unhover (Pointer pointer)
 		{
-			OnUnhover?.Invoke();
-			_isHovered = false;
+			if (_hoveringPointers.Contains(pointer))
+			{
+				_hoveringPointers.Remove(pointer);
+			}
+			if (_isActive)
+			{
+				OnUntarget?.Invoke(pointer);
+			}
 		}
 
-		protected void Start ()
+		protected void Awake ()
 		{
-			if (_activateOnStart)
-			{
-				Activate();
-			}
+			_hoveringPointers = new HashSet<Pointer>();
+			_isActive = _activeByDefault;
 		}
 	}
 }

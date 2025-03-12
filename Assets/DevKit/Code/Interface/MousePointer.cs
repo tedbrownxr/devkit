@@ -18,8 +18,9 @@ namespace DevKit
 			return _camera.ScreenPointToRay(Input.mousePosition);
 		}
 
-		protected void Awake ()
+		protected override void Awake ()
 		{
+			base.Awake();
 			_camera = Camera.main;
 		}
 	}

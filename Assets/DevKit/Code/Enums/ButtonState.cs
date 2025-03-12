@@ -3,9 +3,11 @@ namespace DevKit
 	public enum ButtonState 
 	{
 		None,
-		Inactive,
-		RecentlyActive,
-		Active,
-		RecentlyInactive
+		Deactivated,
+		Idle,
+		Hovered,
+		RecentlyPressed,
+		Pressed,
+		RecentlyReleased
 	}
 }
