@@ -23,7 +23,7 @@ namespace DevKit
 			float localPointHypotenuse = Mathf.Sqrt((localPoint.x * localPoint.x) + (localPoint.z * localPoint.z));
 			float absY = Mathf.Abs(localPoint.y);
 
-//			Debug.Log($"Radius: {radius.ToString("0.00")} / Hyp: {localPointHypotenuse.ToString("0.00")} / Height: {height.ToString("0.00")} / Y: {localPoint.y}");
+//			Log.Message($"Radius: {radius.ToString("0.00")} / Hyp: {localPointHypotenuse.ToString("0.00")} / Height: {height.ToString("0.00")} / Y: {localPoint.y}");
 
 			// in the cylinder
 			if (absY < height / 2 && localPointHypotenuse < radius) 

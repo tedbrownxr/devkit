@@ -6,6 +6,7 @@ namespace DevKit
 	{
 		public bool IsFull => _currentLength == _values.Length;
 		public int Size => _values.Length;
+		public int ValueCount => _currentLength;
 
 		private int _currentIndex;
 		private int _currentLength;
@@ -76,7 +77,26 @@ namespace DevKit
 		/// Calculates the maximum distance between all points in the buffer.
 		/// A high value indicates the tracked object is moving. Inversely, a low value indicates rest.
 		/// </summary>
-		public float GetMaxVariance ()
+		public float GetMaxVarianceDistance ()
+		{
+			float variance = 0;
+			for (int a = 0; a < _currentLength; a++)
+			{
+				for (int b = 0; b < _currentLength; b++)
+				{
+					if (a == b) continue;
+					float distance = Vector3.Distance(_values[a], _values[b]);
+					variance = Mathf.Max(distance, variance);
+				}
+			}
+			return variance;
+		}
+
+		/// <summary>
+		/// Calculates the maximum square magnitude between all points in the buffer.
+		/// A high value indicates the tracked object is moving. Inversely, a low value indicates rest.
+		/// </summary>
+		public float GetMaxVarianceSqrMagnitude ()
 		{
 			float variance = 0;
 			for (int a = 0; a < _currentLength; a++)
@@ -85,7 +105,7 @@ namespace DevKit
 				{
 					if (a == b) continue;
 					// sqrMagnitude is used to minimize compute at expense of accuracy
-					variance = Mathf.Max((_values[a] - _values[b]).sqrMagnitude);
+					variance = Mathf.Max((_values[a] - _values[b]).sqrMagnitude, variance);
 				}
 			}
 			return variance;
